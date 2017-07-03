@@ -1,0 +1,14 @@
+test_ospf_passive:
+  - command: show configuration protocols ospf | display xml
+#  - ignore-null: True
+  - iterate:
+      xpath: //protocols/ospf/area/interface[normalize-space(name) ="lo0.0"]
+      id: './name'
+      tests:
+        - exists: passive
+          err: "Test Failed!! Interface not passivated."
+          info: "Test succeeded!! Interface passivated."
+
+#        - no-diff: flap-count
+#          err: "Test Failed!! flap-count of the peer <{{pre['peer-address']}}> is not the same. it was <{{pre['flap-count']}}>. it is <{{post['flap-count']}}> "
+#          info: "Test succeeded!! flap-count of the peer <{{pre['peer-address']}}> is the same. it is  <{{post['flap-count']}}>"

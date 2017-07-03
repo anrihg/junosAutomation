@@ -1,0 +1,10 @@
+test_cpu: 
+ - command: show chassis routing-engine
+ - ignore-null: True
+ - iterate:
+      xpath: '//route-engine'
+      id: './cpu-system'
+      tests:
+        - no-diff: cpu-system
+          err: "Test Failed!! cpu-system changed! was <{{pre['./cpu-system']}}>, is now <{{post['./cpu-system']}}>"
+          info: "Test succeeded!! cpu-system did not change. it is <{{post['./cpu-system']}}>."

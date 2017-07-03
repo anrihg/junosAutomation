@@ -1,0 +1,14 @@
+test_protocols:
+  - command: show ospf overview
+  - ignore-null: True
+  - iterate:
+      xpath: '//ospf-overview/ospf-area-overview/ospf-nbr-overview'
+      id: './ospf-nbr-up-count'
+      tests:
+        - no-diff: ospf-nbr-up-count
+          err: "Test Failed!! amount of neighbors <{{pre['ospf-nbr-up-count']}}> are not the same. it was <{{pre['ospf-nbr-up-count']}}>. it is <{{post['ospf-neighbor-count']}}> "
+          info: "Test succeeded!! amount of neighbors <{{pre['ospf-nbr-up-count']}}> is the same"
+
+#        - no-diff: flap-count
+#          err: "Test Failed!! flap-count of the peer <{{pre['peer-address']}}> is not the same. it was <{{pre['flap-count']}}>. it is <{{post['flap-count']}}> "
+#          info: "Test succeeded!! flap-count of the peer <{{pre['peer-address']}}> is the same. it is  <{{post['flap-count']}}>"

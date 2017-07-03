@@ -1,0 +1,14 @@
+test_protocols:
+  - command: show bgp summary
+  - ignore-null: True
+  - iterate:
+      xpath: '//bgp-information'
+      id: './peer-count'
+      tests:
+        - no-diff: peer-count
+          err: "Test Failed!! amount of peers <{{pre['peer-count']}}> is not the same. it was <{{pre['peer-count']}}>. it is <{{post['peer-count']}}> "
+          info: "Test succeeded!! amount of peers <{{pre['peer-count']}}> is the same"
+
+#        - no-diff: flap-count
+#          err: "Test Failed!! flap-count of the peer <{{pre['peer-address']}}> is not the same. it was <{{pre['flap-count']}}>. it is <{{post['flap-count']}}> "
+#          info: "Test succeeded!! flap-count of the peer <{{pre['peer-address']}}> is the same. it is  <{{post['flap-count']}}>"

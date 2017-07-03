@@ -1,0 +1,26 @@
+--- 
+######################  CREACION DE VRF  ############################
+
+- name: CREACION DE VRF
+  connection: local
+  gather_facts: false
+  hosts:
+    - nodo-c
+    - nodo-b
+  roles:
+  - Juniper.junos
+  vars_files: 
+    - vars/vpn.yml
+
+  tasks:
+
+    - name: preparando configs para Layer3 VPN
+      template: "src='templates/l2.j2' dest='files/{{junos_host}}_l2.conf'"
+
+    - name: "create l2 VPN instance"
+      junos_config:
+        provider: "{{credentials}}"
+        src: "files/{{junos_host}}_l2.conf"
+        src_format: text
+        comment: 'adding layer2 services'
+        host: "{{junos_host}}"

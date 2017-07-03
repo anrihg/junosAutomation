@@ -1,0 +1,13 @@
+test_as: 
+ - command: show configuration routing-options | display xml
+ - ignore-null: True
+ - iterate:
+
+      xpath: '//autonomous-system'
+      id: './as-number'
+      tests:
+        - is-equal: as-number, 64000
+          err: "Test Failed!! as-number changed! was <{{pre['./as-number']}}>, is now <{{post['./as-number']}}>"
+          info: "Test succeeded!! as-number did not change. it is <{{post['./as-number']}}>."
+        # err: "Test Failed!! host-name changed!"
+        # info: "Test succeeded!! host-name did not change. it is <{{id_0}}>"

@@ -1,0 +1,10 @@
+test_protocols:
+  - command: show route summary
+  - ignore-null: True
+  - iterate:
+      xpath: //route-summary-information/route-table
+      id: 'table-name'
+      tests:
+        - no-diff: active-route-count
+          err: "Test Failed!! amount of routes <{{pre['active-route-count']}}> is not the same. it was <{{pre['active-route-count']}}>. it is <{{post['active-route-count']}}> "
+          info: "Test succeeded!! amount of routes <{{pre['active-route-count']}}> is the same"

@@ -1,0 +1,49 @@
+interfaces{
+    {{int}} {
+        unit {{VRF_ID}} {
+            vlan-id {{VRF_ID}};
+            family inet {
+                address {{ip_int_vrf}}/24;
+            }
+        }
+
+    }
+}
+
+policy-options{
+    policy-statement EXPORT-VRF-{{VRF_ID}} {
+        term 1 {
+            from protocol [ direct static ];
+            then {
+                community add VRF{{VRF_ID}};
+                accept;
+            }
+        }
+    }
+
+    policy-statement IMPORT-VRF-{{VRF_ID}} {
+        term 1 {
+            from {
+                protocol bgp;
+                community VRF{{VRF_ID}};
+            }
+            then accept;
+        }
+        term 2 {
+            then reject;
+        }
+    }
+    community VRF{{VRF_ID}} members target:{{VRF_ID}}:{{VRF_ID}};
+}
+
+routing-instances {
+    L3VPN_{{VRF_ID}} {
+        instance-type vrf;
+        interface {{int}}.{{VRF_ID}};
+        route-distinguisher {{IP_lo0}}:{{VRF_ID}};
+        vrf-import IMPORT-VRF-{{VRF_ID}};
+        vrf-export EXPORT-VRF-{{VRF_ID}};
+        vrf-table-label;
+    }
+}
+

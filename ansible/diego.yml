@@ -1,0 +1,54 @@
+--- 
+- 
+  connection: local
+  gather_facts: false
+  hosts: uno
+  roles:
+  - Juniper.junos
+  vars_files: 
+    - vars/vpn.yml
+
+  tasks:
+
+    - name: "Collect Pre Snapshot"
+      junos_jsnapy: 
+        action: snap_pre
+        host: "{{ junos_host }}"
+        passwd: "{{ credentials.password }}"
+        test_files: ../jsnapy/tests/test3.yml
+        user: "{{ credentials.username }}"
+    #   register: test_check
+
+    # - name: Debug jsnapy
+    #   debug: 
+    #     msg: "{{ test_check }}"
+
+    # - name: Compare snapshots
+    #   junos_jsnapy:
+    #     host: "{{ junos_host }}"
+    #     user: "{{ credentials.username }}"
+    #     passwd: "{{ credentials.password }}"
+    #     action: "check"
+    #     test_files: ../jsnapy/tests/test3.yml
+    #   register: test_check
+
+    # - name: Debug jsnapy
+    #   debug: 
+    #     msg: "{{ test_check }}"
+
+    - name: Check Users
+      junos_jsnapy:
+        host: "{{ junos_host }}"
+        user: "{{ credentials.username }}"
+        passwd: "{{ credentials.password }}"
+        action: "snapcheck"
+        test_files: ../jsnapy/tests/test3.yml
+      register: test_check_2
+
+    - name: Debug2 jsnapy
+      debug: 
+        msg: "{{ test_check_2 }}"
+
+    # - name: Debug2 jsnapy
+    #   debug: 
+    #     msg: "{{ test_check_2.final_result }}"

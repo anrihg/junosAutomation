@@ -1,0 +1,352 @@
+--- 
+######################  CONTROLES PRE  ############################
+
+- name: CONTROLES PRE
+  connection: local
+  gather_facts: false
+  hosts: all
+  roles:
+  - Juniper.junos
+
+  tasks:
+
+    - name: Check Routes pre
+      junos_jsnapy:
+        host: "{{ junos_host }}"
+        user: "{{ credentials.username }}"
+        passwd: "{{ credentials.password }}"
+        action: snap_pre
+        test_files: ../jsnapy/tests/testRoute.yml
+
+    - name: Check CPU pre
+      junos_jsnapy:
+        host: "{{ junos_host }}"
+        user: "{{ credentials.username }}"
+        passwd: "{{ credentials.password }}"
+        action: snap_pre
+        test_files: ../jsnapy/tests/testCpu.yml
+
+    - name: Check BGP pre
+      junos_jsnapy:
+        host: "{{ junos_host }}"
+        user: "{{ credentials.username }}"
+        passwd: "{{ credentials.password }}"
+        action: snap_pre
+        test_files: ../jsnapy/tests/testBgp.yml
+
+    - name: Check OSPF pre
+      junos_jsnapy:
+        host: "{{ junos_host }}"
+        user: "{{ credentials.username }}"
+        passwd: "{{ credentials.password }}"
+        action: snap_pre
+        test_files: ../jsnapy/tests/testOspf.yml
+
+    - name: Check OSPFp pre
+      junos_jsnapy:
+        host: "{{ junos_host }}"
+        user: "{{ credentials.username }}"
+        passwd: "{{ credentials.password }}"
+        action: snap_pre
+        test_files: ../jsnapy/tests/testOspfP.yml
+
+    - name: Check LDP pre
+      junos_jsnapy:
+        host: "{{ junos_host }}"
+        user: "{{ credentials.username }}"
+        passwd: "{{ credentials.password }}"
+        action: snap_pre
+        test_files: ../jsnapy/tests/testLdp.yml
+
+
+######################  CREACION DE VRF  ############################
+
+- name: CREACION DE VRF L3VPN_{{VRF_ID}}
+  connection: local
+  gather_facts: false
+  hosts:
+    - nodo-c
+    - nodo-b
+  roles:
+  - Juniper.junos
+  vars_files: 
+    - vars/vpn.yml
+
+  tasks:
+
+    - name: preparando configs para Layer3 VPN
+      template: "src='templates/l2.j2' dest='files/{{junos_host}}_l2.conf'"
+
+    - name: "creando l2 VPN instance"
+      junos_config:
+        provider: "{{credentials}}"
+        src: "files/{{junos_host}}_l2.conf"
+        src_format: text
+        comment: 'adding layer2 services'
+        host: "{{junos_host}}"
+
+
+######################  CREACION DE VPLS  ############################
+
+- name: CREACION DE VPLS-{{VPLS_ID}}
+  connection: local
+  gather_facts: false
+  hosts: 
+    - nodo-c
+    - nodo-f
+  roles:
+  - Juniper.junos
+  vars_files: 
+    - vars/vpn.yml
+
+  tasks:
+
+    - name: preparando configs para Layer2 VPN
+      template: "src='templates/l3.j2' dest='files/{{junos_host}}_l3.conf'"
+
+    - name: "creando Layer3 VPN instance"
+      junos_config:
+        provider: "{{credentials}}"
+        src: "files/{{junos_host}}_l3.conf"
+        src_format: text
+        comment: 'adding layer3 services'
+        host: "{{junos_host}}"
+
+
+######################  CONTROLES POST  ############################
+
+- name: CONTROLES POST
+  connection: local
+  gather_facts: false
+  hosts: all
+    # - nodo-c
+    # - nodo-b
+    # - nodo-f
+  roles:
+  - Juniper.junos
+  vars_files: 
+    - vars/vpn.yml
+
+  tasks:
+
+    - name: Check Routes post
+      junos_jsnapy:
+        host: "{{ junos_host }}"
+        user: "{{ credentials.username }}"
+        passwd: "{{ credentials.password }}"
+        action: snap_post
+        test_files: ../jsnapy/tests/testRoute.yml
+
+
+    - name: Check CPU post
+      junos_jsnapy:
+        host: "{{ junos_host }}"
+        user: "{{ credentials.username }}"
+        passwd: "{{ credentials.password }}"
+        action: "snap_post"
+        test_files: ../jsnapy/tests/testCpu.yml
+
+    - name: Check BGP post
+      junos_jsnapy:
+        host: "{{ junos_host }}"
+        user: "{{ credentials.username }}"
+        passwd: "{{ credentials.password }}"
+        action: "snap_post"
+        test_files: ../jsnapy/tests/testBgp.yml
+
+    - name: Check OSPF post
+      junos_jsnapy:
+        host: "{{ junos_host }}"
+        user: "{{ credentials.username }}"
+        passwd: "{{ credentials.password }}"
+        action: "snap_post"
+        test_files: ../jsnapy/tests/testOspf.yml
+
+    - name: Check OSPFp post
+      junos_jsnapy:
+        host: "{{ junos_host }}"
+        user: "{{ credentials.username }}"
+        passwd: "{{ credentials.password }}"
+        action: "snap_post"
+        test_files: ../jsnapy/tests/testOspfP.yml
+
+    - name: Check LDP post
+      junos_jsnapy:
+        host: "{{ junos_host }}"
+        user: "{{ credentials.username }}"
+        passwd: "{{ credentials.password }}"
+        action: "snap_post"
+        test_files: ../jsnapy/tests/testLdp.yml
+
+
+
+######################  COMPARE TESTS  ############################
+
+    - name: Compare Routes
+      junos_jsnapy:
+        host: "{{ junos_host }}"
+        user: "{{ credentials.username }}"
+        passwd: "{{ credentials.password }}"
+        action: "check"
+        test_files: ../jsnapy/tests/testRoute.yml
+      register: test_route
+
+    - name: Compare Routes debug
+      debug: 
+        msg: "{{ test_route.final_result }}"
+        # msg: "{{ test_route.final_result }} ---- {{ test_route.test_results }}"
+
+    - name: Compare CPU
+      junos_jsnapy:
+        host: "{{ junos_host }}"
+        user: "{{ credentials.username }}"
+        passwd: "{{ credentials.password }}"
+        action: "check"
+        test_files: ../jsnapy/tests/testCpu.yml
+      register: test_cpu
+
+    - name: Compare CPU debug
+      debug: 
+        msg: "{{ test_cpu.final_result }}"
+        # msg: "{{ test_cpu.final_result }} ---- {{ test_cpu.test_results }}"
+
+    - name: Compare BGP
+      junos_jsnapy:
+        host: "{{ junos_host }}"
+        user: "{{ credentials.username }}"
+        passwd: "{{ credentials.password }}"
+        action: "check"
+        test_files: ../jsnapy/tests/testBgp.yml
+      register: test_bgp
+
+    - name: Compare BGP debug
+      debug: 
+        msg: "{{ test_bgp.final_result }}"
+        # msg: "{{ test_bgp.final_result }} ---- {{ test_bgp.test_results }}"
+
+    - name: Compare OSPF
+      junos_jsnapy:
+        host: "{{ junos_host }}"
+        user: "{{ credentials.username }}"
+        passwd: "{{ credentials.password }}"
+        action: "check"
+        test_files: ../jsnapy/tests/testOspf.yml
+      register: test_ospf
+
+    - name: Compare OSPF debug
+      debug: 
+        msg: "{{ test_ospf.final_result }}"
+        # msg: "{{ test_ospf.final_result }} ---- {{ test_ospf.test_results }}"
+
+    - name: Compare OSPFp
+      junos_jsnapy:
+        host: "{{ junos_host }}"
+        user: "{{ credentials.username }}"
+        passwd: "{{ credentials.password }}"
+        action: "check"
+        test_files: ../jsnapy/tests/testOspfP.yml
+      register: test_ospfp
+
+    - name: Compare OSPFp debug
+      debug: 
+        msg: "{{ test_ospfp.final_result }}"
+        # msg: "{{ test_ospfp.final_result }} ---- {{ test_ospfp.test_results }}"
+
+    - name: Compare LDP
+      junos_jsnapy:
+        host: "{{ junos_host }}"
+        user: "{{ credentials.username }}"
+        passwd: "{{ credentials.password }}"
+        action: "check"
+        test_files: ../jsnapy/tests/testLdp.yml
+      register: test_ldp
+
+    - name: Compare LDP debug
+      debug: 
+        # msg: "{{ test_ldp.final_result }}"
+        msg: "{{ test_ldp.final_result }} ---- {{ test_ldp.test_results }}"
+
+  # - name: Check JSNAPy tests results
+  #   assert:
+  #   that:
+  #     - "test_ldp.passPercentage == 100"
+
+######################  PING TESTS  ############################
+
+    - name: Execute ping Inet.0
+      junos_ping:
+        host: "{{ junos_host }}"
+        user: "{{ credentials.username }}"
+        passwd: "{{ credentials.password }}"
+        dest_ip: "{{ dest_ip }}"
+        source_ip: "{{ IP_lo0 }}"
+
+
+- name: Ejecutando ping VRF L3VPN_{{VRF_ID}}
+  connection: local
+  gather_facts: false
+  hosts:
+    - nodo-c
+    - nodo-f
+  roles:
+  - Juniper.junos
+  vars_files: 
+    - vars/vpn.yml
+
+  tasks:
+
+
+    - name: Ejecutando ping VRF L3VPN_{{VRF_ID}}
+      junos_ping:
+        host: "{{ junos_host }}"
+        user: "{{ credentials.username }}"
+        passwd: "{{ credentials.password }}"
+        dest_ip: "{{ dest_ip_vrf }}"
+        source_ip: "{{ ip_int_vrf }}"
+        routing_instance: "L3VPN_{{VRF_ID}}"
+        count: 3
+      register: test_ping_vrf
+
+    - name: ping VRF L3VPN_{{VRF_ID}} Result
+      debug: 
+        msg: "{{ test_ping_vrf.msg }}"
+
+
+######################  CHEQUEOS PUNTO 3  ############################
+
+
+- name: CHEQUEOS PUNTO 3
+  connection: local
+  gather_facts: false
+  hosts: all
+    # - nodo-c
+    # - nodo-b
+    # - nodo-f
+  roles:
+  - Juniper.junos
+  vars_files: 
+    - vars/vpn.yml
+
+  tasks:
+
+    - name: Check AS 64000 pre
+      junos_jsnapy: 
+        host: "{{ junos_host }}"
+        user: "{{ credentials.username }}"
+        passwd: "{{ credentials.password }}"
+        action: snap_pre
+        test_files: ../jsnapy/tests/testAS.yml
+
+    - name: Check AS 64000 post
+      junos_jsnapy:
+        host: "{{ junos_host }}"
+        user: "{{ credentials.username }}"
+        passwd: "{{ credentials.password }}"
+        action: "snapcheck"
+        test_files: ../jsnapy/tests/testAS.yml
+      register: checkAS
+
+    - name: Check AS post
+      debug: 
+        msg: "{{ checkAS.final_result}}"
+        # msg: "{{ checkAS.final_result}}  ---- {{ checkAS.test_results }}"

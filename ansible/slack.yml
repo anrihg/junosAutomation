@@ -1,0 +1,14 @@
+- name: SLACK
+  connection: local
+  gather_facts: false
+  hosts: all
+  roles:
+  - Juniper.junos
+
+  tasks:
+    - name: Send notification message via Slack
+      slack:
+        token: xoxp-200963728710-201873617776-206403969238-c3b6e38d0d103f7df2c9578aca7086b8
+        channel: #team-cordoba
+        msg: '{{ inventory_hostname }} completed'
+      delegate_to: localhost

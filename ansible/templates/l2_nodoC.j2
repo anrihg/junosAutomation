@@ -1,0 +1,33 @@
+# nodos C
+
+interfaces {
+    {{int}} {
+        unit {{VPLS_ID}} {
+            encapsulation vlan-vpls;
+            vlan-id {{l2.vlanid}};
+            output-vlan-map swap;
+            family vpls;
+        }
+    }
+}
+
+routing-instances {
+        VPLS-{{VPLS_ID}} {
+            instance-type vpls;
+            interface {{int}}.{{VPLS_ID}};
+                protocols {
+                    vpls {
+                        encapsulation-type ethernet;
+                        no-control-word;
+                        no-tunnel-services;
+                        vpls-id {{VPLS_ID}};
+                        mtu 1500;
+                        ignore-encapsulation-mismatch;
+                        {% for vecino in vecinos %}
+                            neighbor {{vecino}};
+                        {% endfor %}
+            }
+        }
+
+    }
+}

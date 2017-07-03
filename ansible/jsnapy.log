@@ -1,0 +1,12 @@
+2017-06-28 19:17:46,433:CONFIG:12.13.14.1:connecting to host: root@12.13.14.1:830
+2017-06-28 19:17:46,440:ncclient.transport.ssh:Connected (version 2.0, client OpenSSH_6.6.1)
+2017-06-28 19:17:46,628:ncclient.transport.ssh:Authentication (password) successful!
+2017-06-28 19:17:46,801:ncclient.transport.session:initialized: session-id=22207 | server_capabilities=<dictionary-keyiterator object at 0x7fe9686e9ec0>
+2017-06-28 19:17:46,801:CONFIG:12.13.14.1:pushing file: /home/user-one/g1/jsnapy/tests/testAS.yml
+2017-06-28 19:17:46,801:CONFIG:12.13.14.1:taking lock
+2017-06-28 19:17:46,802:ncclient.operations.rpc:Requesting 'ExecuteRpc'
+2017-06-28 19:17:46,866:CONFIG:12.13.14.1:loading config
+2017-06-28 19:17:46,867:CONFIG:12.13.14.1:Unable to load config: Unknown file contents from extension: .yml
+2017-06-28 19:17:46,867:CONFIG:12.13.14.1:unlocking
+2017-06-28 19:17:46,867:ncclient.operations.rpc:Requesting 'ExecuteRpc'
+2017-06-28 19:17:46,981:ncclient.operations.rpc:Requesting 'CloseSession'

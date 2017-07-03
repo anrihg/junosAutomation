@@ -1,0 +1,68 @@
+--- 
+- name: CHEQUEOS PUNTO 3
+  connection: local
+  gather_facts: false
+  hosts: all
+  roles:
+  - Juniper.junos
+  vars_files: 
+    - vars/vpn.yml
+  tasks:
+
+    - name: Check AS pre
+      junos_jsnapy: 
+        host: "{{ junos_host }}"
+        user: "{{ credentials.username }}"
+        passwd: "{{ credentials.password }}"
+        action: snap_pre
+        test_files: ../jsnapy/tests/testAS.yml
+
+    - name: Check AS post
+      junos_jsnapy:
+        host: "{{ junos_host }}"
+        user: "{{ credentials.username }}"
+        passwd: "{{ credentials.password }}"
+        action: "snapcheck"
+        test_files: ../jsnapy/tests/testAS.yml
+      register: checkAS
+
+    - name: Check AS post
+      debug: 
+        msg: "{{ checkAS.final_result}}  ---- {{ checkAS.test_results }}"
+        # msg: "{{ checkAS }}"
+        # msg: "{{ checkAS.final_result }}"
+        # msg: "{{ checkAS.test_results }}"
+
+# MODULO QUE ME HIZO BAJAR PAUL DESDE 
+# https://github.com/Juniper/ansible-junos-stdlib/blob/master/library/
+    # - name: probando install config
+    #   junos_install_config: 
+    #     host: "{{ junos_host }}"
+    #     user: "{{ credentials.username }}"
+    #     passwd: "{{ credentials.password }}"
+    #     file: ../jsnapy/tests/testAS.yml
+    #     logfile: "jsnapy.log"
+
+
+
+
+    # - name: Check AS pre
+    #   junos_jsnapy: 
+    #     host: "{{ junos_host }}"
+    #     user: "{{ credentials.username }}"
+    #     passwd: "{{ credentials.password }}"
+    #     action: snap_pre
+    #     test_files: ../jsnapy/tests/tests.yml
+
+    # - name: Check AS post
+    #   junos_jsnapy:
+    #     host: "{{ junos_host }}"
+    #     user: "{{ credentials.username }}"
+    #     passwd: "{{ credentials.password }}"
+    #     action: "snapcheck"
+    #     test_files: ../jsnapy/tests/tests.yml
+    #   register: checks
+
+    # - name: Check AS post
+    #   debug: 
+    #     msg: "{{ checks }}"

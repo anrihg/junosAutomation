@@ -1,0 +1,9 @@
+---
+IP_lo0: 5.5.5.5
+dest_ip: 8.8.8.8
+int: ge-0/0/4
+ip_int_vrf: 100.10.51.1
+dest_ip_vrf: 100.10.71.1
+vecinos:
+  - 4.4.4.4
+vlanid: 13

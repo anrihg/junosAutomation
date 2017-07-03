@@ -1,0 +1,93 @@
+test_as: 
+ - command: show configuration routing-options | display xml
+ - ignore-null: True
+ - iterate:
+
+      xpath: '//autonomous-system'
+      id: './as-number'
+      tests:
+        - is-equal: as-number, 64000
+          err: "Test Failed!! as-number changed! was <{{pre['./as-number']}}>, is now <{{post['./as-number']}}>"
+          info: "Test succeeded!! as-number did not change. it is <{{post['./as-number']}}>."
+        # err: "Test Failed!! host-name changed!"
+        # info: "Test succeeded!! host-name did not change. it is <{{id_0}}>"
+
+
+
+test_protocols:
+  - command: show bgp summary
+  - ignore-null: True
+  - iterate:
+      xpath: '//bgp-information'
+      id: './peer-count'
+      tests:
+        - no-diff: peer-count
+          err: "Test Failed!! amount of peers <{{pre['peer-count']}}> is not the same. it was <{{pre['peer-count']}}>. it is <{{post['peer-count']}}> "
+          info: "Test succeeded!! amount of peers <{{pre['peer-count']}}> is the same"
+
+#        - no-diff: flap-count
+#          err: "Test Failed!! flap-count of the peer <{{pre['peer-address']}}> is not the same. it was <{{pre['flap-count']}}>. it is <{{post['flap-count']}}> "
+#          info: "Test succeeded!! flap-count of the peer <{{pre['peer-address']}}> is the same. it is  <{{post['flap-count']}}>"
+
+
+
+
+test_cpu: 
+ - command: show chassis routing-engine
+ - ignore-null: True
+ - iterate:
+      xpath: '//route-engine'
+      id: './cpu-system'
+      tests:
+        - no-diff: cpu-system
+          err: "Test Failed!! cpu-system changed! was <{{pre['./cpu-system']}}>, is now <{{post['./cpu-system']}}>"
+          info: "Test succeeded!! cpu-system did not change. it is <{{post['./cpu-system']}}>."
+
+
+
+
+test_protocols:
+  - command: show ldp statistics
+  - ignore-null: True
+  - iterate:
+      xpath: //ldp-statistics/ldp-event-statistics[normalize-space(ldp-event-type) ="Sessions opened"]
+      id: './ldp-event-count'
+      tests:
+        - no-diff: ldp-event-count
+          err: "Test Failed!! state of the ldp neighbor <{{pre['ldp-event-count']}}> is not the same. it was <{{pre['ldp-event-count']}}>. it is <{{post['ldp-event-count']}}> "
+          info: "Test succeeded!! state of the ldp neighbor <{{pre['ldp-event-count']}}> is the same"
+
+#        - no-diff: flap-count
+#          err: "Test Failed!! flap-count of the ldp neighbor <{{pre['ldp neighbor-address']}}> is not the same. it was <{{pre['flap-count']}}>. it is <{{post['flap-count']}}> "
+#          info: "Test succeeded!! flap-count of the ldp neighbor <{{pre['ldp neighbor-address']}}> is the same. it is  <{{post['flap-count']}}>"
+
+
+
+
+test_protocols:
+  - command: show ospf overview
+  - ignore-null: True
+  - iterate:
+      xpath: '//ospf-overview/ospf-area-overview/ospf-nbr-overview'
+      id: './ospf-nbr-up-count'
+      tests:
+        - no-diff: ospf-nbr-up-count
+          err: "Test Failed!! amount of neighbors <{{pre['ospf-nbr-up-count']}}> are not the same. it was <{{pre['ospf-nbr-up-count']}}>. it is <{{post['ospf-neighbor-count']}}> "
+          info: "Test succeeded!! amount of neighbors <{{pre['ospf-nbr-up-count']}}> is the same"
+
+#        - no-diff: flap-count
+#          err: "Test Failed!! flap-count of the peer <{{pre['peer-address']}}> is not the same. it was <{{pre['flap-count']}}>. it is <{{post['flap-count']}}> "
+#          info: "Test succeeded!! flap-count of the peer <{{pre['peer-address']}}> is the same. it is  <{{post['flap-count']}}>"
+
+
+
+test_protocols:
+  - command: show route summary
+  - ignore-null: True
+  - iterate:
+      xpath: //route-summary-information/route-table
+      id: 'table-name'
+      tests:
+        - no-diff: active-route-count
+          err: "Test Failed!! amount of routes <{{pre['active-route-count']}}> is not the same. it was <{{pre['active-route-count']}}>. it is <{{post['active-route-count']}}> "
+          info: "Test succeeded!! amount of routes <{{pre['active-route-count']}}> is the same"

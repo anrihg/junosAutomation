@@ -1,0 +1,14 @@
+test_protocols:
+  - command: show ldp statistics
+  - ignore-null: True
+  - iterate:
+      xpath: //ldp-statistics/ldp-event-statistics[normalize-space(ldp-event-type) ="Sessions opened"]
+      id: './ldp-event-count'
+      tests:
+        - no-diff: ldp-event-count
+          err: "Test Failed!! state of the ldp neighbor <{{pre['ldp-event-count']}}> is not the same. it was <{{pre['ldp-event-count']}}>. it is <{{post['ldp-event-count']}}> "
+          info: "Test succeeded!! state of the ldp neighbor <{{pre['ldp-event-count']}}> is the same"
+
+#        - no-diff: flap-count
+#          err: "Test Failed!! flap-count of the ldp neighbor <{{pre['ldp neighbor-address']}}> is not the same. it was <{{pre['flap-count']}}>. it is <{{post['flap-count']}}> "
+#          info: "Test succeeded!! flap-count of the ldp neighbor <{{pre['ldp neighbor-address']}}> is the same. it is  <{{post['flap-count']}}>"

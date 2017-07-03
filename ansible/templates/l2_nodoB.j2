@@ -1,0 +1,30 @@
+# Configuracion VPLS en nodos B3
+
+routing-instances {
+    VPLS-{{VPLS_ID}} {
+        instance-type vpls;
+        vlan-id none;
+        route-distinguisher {{IP_lo0}}:{{VPLS_ID}};
+        vrf-target target:{{VPLS_ID}}:{{VPLS_ID}};
+        protocols {
+            vpls {
+                site-range 50;
+                no-tunnel-services;
+                site VPLS-1-5 {
+                    site-identifier {{l2.si}};
+                    multi-homing;
+                }
+                vpls-id {{VPLS_ID}};
+                mesh-group ldp-{{VPLS_ID}} {
+                    local-switching;
+
+                {% for vecino in vecinos %}
+                    neighbor {{vecino}};
+                {% endfor %}
+
+                }
+            }
+        }
+    }
+}
+

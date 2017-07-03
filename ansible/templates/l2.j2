@@ -1,0 +1,69 @@
+# Configuracion VPLS en nodos C
+
+{% if vlanid is defined %}
+interfaces {
+    {{int}} {
+        unit {{VPLS_ID}} {
+            encapsulation vlan-vpls;
+            vlan-id {{vlanid}}{{VPLS_ID}};
+            output-vlan-map swap;
+            family vpls;
+        }
+    }
+}
+
+routing-instances {
+        VPLS-{{VPLS_ID}} {
+            instance-type vpls;
+            interface {{int}}.{{VPLS_ID}};
+                protocols {
+                    vpls {
+                        encapsulation-type ethernet;
+                        no-control-word;
+                        no-tunnel-services;
+                        vpls-id {{VPLS_ID}};
+                        mtu 1500;
+                        ignore-encapsulation-mismatch;
+                        {% for vecino in vecinos %}
+                            neighbor {{vecino}};
+                        {% endfor %}
+            }
+        }
+
+    }
+}
+
+{% else %}
+
+
+# Configuracion VPLS en nodos B
+
+routing-instances {
+    VPLS-{{VPLS_ID}} {
+        instance-type vpls;
+        vlan-id none;
+        route-distinguisher {{IP_lo0}}:{{VPLS_ID}};
+        vrf-target target:{{VPLS_ID}}:{{VPLS_ID}};
+        protocols {
+            vpls {
+                site-range 50;
+                no-tunnel-services;
+                site VPLS-1-5 {
+                    site-identifier {{si}};
+                    multi-homing;
+                }
+                vpls-id {{VPLS_ID}};
+                mesh-group ldp-{{VPLS_ID}} {
+                    local-switching;
+
+                {% for vecino in vecinos %}
+                    neighbor {{vecino}};
+                {% endfor %}
+
+                }
+            }
+        }
+    }
+}
+
+{% endif %}

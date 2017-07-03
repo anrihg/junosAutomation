@@ -1,0 +1,42 @@
+[equipos-all:children]
+nodo-c
+nodo-b
+nodo-f
+nodo-d
+bgp-peer
+rr
+todos
+
+[nodo-c]
+Nodo-C1			junos_host=12.13.14.1
+Nodo-C3			junos_host=12.13.14.2
+Nodo-C2			junos_host=12.13.14.3
+
+[nodo-b]
+Nodo-B1			junos_host=12.13.14.7
+Nodo-B2			junos_host=12.13.14.5
+Nodo-B3			junos_host=12.13.14.6
+
+[nodo-f]
+Nodo-F			junos_host=12.13.14.9
+
+[nodo-d]
+Nodo-D			junos_host=12.13.14.10
+
+[bgp-peer]
+BGP-Peer		junos_host=12.13.14.4
+
+[rr]
+Route_Reflector	junos_host=12.13.14.8
+
+[todos]
+Nodo-C1			junos_host=12.13.14.1
+Nodo-C2			junos_host=12.13.14.3
+Nodo-B2			junos_host=12.13.14.5
+Nodo-B1			junos_host=12.13.14.7
+Nodo-F			junos_host=12.13.14.9
+Nodo-C3			junos_host=12.13.14.2
+BGP-Peer		junos_host=12.13.14.4
+Nodo-B3			junos_host=12.13.14.6
+Route_Reflector	junos_host=12.13.14.8
+Nodo-D			junos_host=12.13.14.10
